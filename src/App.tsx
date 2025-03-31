@@ -5,6 +5,8 @@ const API_BASE_URL = 'https://api.themoviedb.org/3';
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [movies, setMovies] = useState([]); 
+  const [loading, setLoading] = useState(false);
 
   const API_OPTIONS = {
     method: 'GET',
@@ -16,13 +18,20 @@ const App = () => {
 
   const fetchMovies = async () => {
     try{
-      const endpoint = `${API_BASE_URL}/discover/movie/sort_by=popularity.desc`;
+      setLoading(true);
+      setErrorMsg('');
+      const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
       const response = await fetch(endpoint, API_OPTIONS);
       if (!response.ok) {
         throw new Error('Unable to fetch movies');
       }
       const data = await response.json();
-      console.log(data);
+      if(data.Response==='False'){
+        setErrorMsg(data.Error || 'Failed to fetch movies');
+        setMovies([]);
+        return;
+      }
+      setMovies(data.results || []);
     }
     catch(error: unknown){
       if (error instanceof Error) {
@@ -31,11 +40,14 @@ const App = () => {
         setErrorMsg('An unknown error occurred');
       }
     }
+    finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
       fetchMovies()
-  }, [searchTerm]);
+  }, []);
   return (
     <main>
       <div className="pattern"/> 
@@ -49,6 +61,12 @@ const App = () => {
         <section className='all-movies'>
           <h2>All Movies</h2>
           {errorMsg && <p className="text-red-500">{errorMsg}</p>}
+          {loading? (<p className='loading'>Loading...</p>) : errorMsg ? (<p className="text-red-500">{errorMsg}</p>)
+          :
+          (movies.map((movie) => (<ul>
+            <p className='text-white'>{movie?.title}</p>
+          </ul>)))
+        }
         </section>
       </div>
     </main>
