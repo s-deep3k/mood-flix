@@ -1,11 +1,19 @@
 
 import { useEffect, useState } from 'react';
 import Search from './components/Search.jsx';
+import Spinner from './components/Spinner.jsx';
+import MovieCard from './components/MovieCard.jsx';
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [movies, setMovies] = useState([]); 
+
+  interface Movie {
+    id:string;
+    title: string;
+  }
+
+  const [movies, setMovies] = useState<Movie[]>([]); 
   const [loading, setLoading] = useState(false);
 
   const API_OPTIONS = {
@@ -59,12 +67,12 @@ const App = () => {
         </header>
 
         <section className='all-movies'>
-          <h2>All Movies</h2>
+          <h2 className='mt-[20px]'>All Movies</h2>
           {errorMsg && <p className="text-red-500">{errorMsg}</p>}
-          {loading? (<p className='loading'>Loading...</p>) : errorMsg ? (<p className="text-red-500">{errorMsg}</p>)
+          {loading? (<Spinner/>) : errorMsg ? (<p className="text-red-500">{errorMsg}</p>)
           :
           (movies.map((movie) => (<ul>
-            <p className='text-white'>{movie?.title}</p>
+            <MovieCard key={movie?.id} movie={movie}/>
           </ul>)))
         }
         </section>
