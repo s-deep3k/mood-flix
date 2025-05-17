@@ -9,8 +9,12 @@ const App = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   interface Movie {
-    id:string;
+    id: string;
     title: string;
+    poster_path: string;
+    vote_average: number;
+    release_date: string;
+    original_language: string;
   }
 
   const [movies, setMovies] = useState<Movie[]>([]); 
@@ -71,9 +75,9 @@ const App = () => {
           {errorMsg && <p className="text-red-500">{errorMsg}</p>}
           {loading? (<Spinner/>) : errorMsg ? (<p className="text-red-500">{errorMsg}</p>)
           :
-          (movies.map((movie) => (<ul>
-            <MovieCard key={movie?.id} movie={movie}/>
-          </ul>)))
+          (<ul>
+            {movies.map((movie) => (<MovieCard key={movie?.id} movie={movie}/>))}
+          </ul>)
         }
         </section>
       </div>
