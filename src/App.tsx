@@ -1,8 +1,10 @@
 
 import { useEffect, useState } from 'react';
+import { useDebounce } from 'react-use';
 import Search from './components/Search.jsx';
 import Spinner from './components/Spinner.jsx';
 import MovieCard from './components/MovieCard.jsx';
+
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,6 +21,7 @@ const App = () => {
 
   const [movies, setMovies] = useState<Movie[]>([]); 
   const [loading, setLoading] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const API_OPTIONS = {
     method: 'GET',
@@ -59,9 +62,12 @@ const App = () => {
       setLoading(false);
     }
   }
+  useDebounce(()=>{
+    setDebouncedSearchTerm(searchTerm);
+  }, 500, [searchTerm]);
 
   useEffect(() => {
-      fetchMovies(searchTerm)
+      fetchMovies(debouncedSearchTerm)
   }, [searchTerm]);
   return (
     <main>
@@ -74,7 +80,7 @@ const App = () => {
         </header>
 
         <section className='all-movies'>
-          <h2 className='mt-[20px]'>All Movies</h2>
+          <h2 className='mt-[40px]'>All Movies</h2>
           {errorMsg && <p className="text-red-500">{errorMsg}</p>}
           {loading? (<Spinner/>) : errorMsg ? (<p className="text-red-500">{errorMsg}</p>)
           :
