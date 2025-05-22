@@ -31,6 +31,9 @@ const App = () => {
       Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
     },
   };
+  useDebounce(()=>{
+    setDebouncedSearchTerm(searchTerm);
+  }, 500, [searchTerm]);
 
   const fetchMovies = async (query='') => {
     try{
@@ -51,7 +54,7 @@ const App = () => {
         return;
       }
       setMovies(data.results || []);
-
+      
       if(query && data.results.length > 0){
         await updateSearchTerm(query,data.results[0]);
       }
@@ -67,13 +70,10 @@ const App = () => {
       setLoading(false);
     }
   }
-  useDebounce(()=>{
-    setDebouncedSearchTerm(searchTerm);
-  }, 500, [searchTerm]);
 
   useEffect(() => {
       fetchMovies(debouncedSearchTerm)
-  }, [searchTerm]);
+  }, [debouncedSearchTerm]);
   return (
     <main>
       <div className="pattern"/> 
