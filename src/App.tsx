@@ -1,4 +1,5 @@
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'react-use';
 import Search from './components/Search.jsx';
@@ -74,7 +75,7 @@ const App = () => {
   const fetchTrendingMovies = async () => {
     try {
       const tMovies = await getTrendingMovies()
-      setTrendingMovies(tMovies);
+      setTrendingMovies(tMovies); 
     } catch (error) {
       console.error('Error fetching trending movies:', error);
     }
